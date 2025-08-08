@@ -1,7 +1,7 @@
 
-images: image
+images: ./image_ours
 
-detection: weights/example.pt
+detection: ./saved_models/v1.0.0/epoch50.pt
 detection-size: 640
 detection-confidence: 0.25
 detection-iou: 0.25

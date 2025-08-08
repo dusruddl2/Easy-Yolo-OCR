@@ -23,7 +23,7 @@ def main(arg):
     device = torch.device(dev)
 
     # config 로드
-    with open('config.yaml', 'r') as f:
+    with open('./config.yaml', 'r') as f:
         config = yaml.safe_load(f)
     img_path, detection = config['images'], config['detection']
     f.close()
@@ -47,7 +47,7 @@ def main(arg):
                 pt_detect(img, device, detection_model, ciou, reader, gray=gray, byteMode=False)
                 print('detecting time:', time_sync() - start_time)
             except Exception as e:
-                print("detecting Fail")
+                print("detecting Fail:" , e)
 
 
 if __name__ == "__main__":
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument('--gpu', type=int, default=-1)
     parser.add_argument('--ciou', type=float, default=20)
     parser.add_argument('--gray', type=bool, default=False)
-    parser.add_argument('--lang', type=str, default='en/ko')
+    # parser.add_argument('--lang', type=str, default='en/ko')
+    parser.add_argument('--lang', type=str, default='en')
     opt = parser.parse_args()
     main(opt)

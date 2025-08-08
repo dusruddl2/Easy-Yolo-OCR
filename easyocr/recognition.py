@@ -157,12 +157,35 @@ def get_recognizer(recog_network, network_params, character,\
     converter = CTCLabelConverter(character, separator_list, dict_list)
     num_class = len(converter.character)
 
+    # ======================================================================================================
     if recog_network == 'generation1':
         model_pkg = importlib.import_module("easyocr.model.model")
     elif recog_network == 'generation2':
         model_pkg = importlib.import_module("easyocr.model.vgg_model")
+    # else:
+    #     model_pkg = importlib.import_module(recog_network)
+    # 사용자 정의 모델 사용
     else:
-        model_pkg = importlib.import_module(recog_network)
+        print("[INFO] CUSTOM get_recognizer LOGIC is running")
+        from easyocr.model.vgg_model import Model
+        model = Model(num_class=num_class, **network_params)
+        
+        # load state_dict
+        state_dict = torch.load(model_path, map_location=device)
+        
+        # DataParallel 저장본 처리
+        if any(k.startswith("module.") for k in state_dict.keys()):
+            new_state_dict = OrderedDict()
+            for k, v in state_dict.items():
+                new_key = k.replace("module.", "")
+                new_state_dict[new_key] = v
+            state_dict = new_state_dict
+        
+        model.load_state_dict(state_dict)
+        model.eval()
+        
+        return model.to(device), converter
+    # ======================================================================================================
     model = model_pkg.Model(num_class=num_class, **network_params)
 
     if device == 'cpu':

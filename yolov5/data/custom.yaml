@@ -1,7 +1,7 @@
-path: ./dataset
-train: custom_train.txt
-val:  custom_valid.txt
+path: /nfs/data/yeonkyung/AMORE/Easy-Yolo-OCR/yolov5
+train: 0721_dataset.txt
+val:  VALID_ok_seen_23_80.txt
 
 
-nc: 1  # number of classes
-names: ['text']  # class names
+nc: 2  # number of classes
+names: ['bbox1', 'bbox2']  # class names

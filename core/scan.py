@@ -62,17 +62,27 @@ def detection(det, names):
 
     return rect_list, label_list
 
+'''
+1. 이미지 경로 입력
+2. YOLOv5 로 박스 탐지
+3. 텍스트 박스들 좌표 획득
+4. EasyOCR로 박스별 텍스트 인식
+5. 클래스 이름 + 텍스트 출력
+'''
+# ==================================================================================
+# def pt_detect(path, device, models, ciou, reader, gray=False, byteMode=False):
+def pt_detect(path, device, models, ciou, reader, gray=False, byteMode=False, img_size=640, confidence=0.25, iou=0.25):
 
-def pt_detect(path, device, models, ciou, reader, gray=False, byteMode=False):
     driver_weights = models
 
     half = device.type != 'cpu'
-    # config 로드
-    with open('config.yaml', 'r') as f:
-        config = yaml.safe_load(f)
-    img_size, confidence, iou = config['detection-size'], config['detection-confidence'], config['detection-iou']
+    # # config 로드
+    # with open('/nfs/home/yeonkyung/AMORE/Easy-Yolo-OCR/config.yaml', 'r') as f:
+    #     config = yaml.safe_load(f)
+    # img_size, confidence, iou = config['detection-size'], config['detection-confidence'], config['detection-iou']
+    
     detection_option = (img_size, confidence, iou)
-    f.close()
+    # f.close()
 
     model, stride, img_size, names = model_setting(driver_weights, half, detection_option[0])
     image_pack = ImagePack(path, img_size, stride, byteMode=byteMode, gray=gray)
@@ -82,11 +92,28 @@ def pt_detect(path, device, models, ciou, reader, gray=False, byteMode=False):
 
     result = reader.recogss(im0s, rect_list)
 
-    result_line, i = [], 0
-    print(f'----------- {path} -----------')
-    for r in result:
-        line = r[1]
-        print(f'{label_list[i]} : {line}')
-        result_line.append(line)
-        i += 1
-    print('-------------------------------')
+
+    # result_line, i = [], 0
+    # print(f'----------- {path} -----------')
+    # for r in result:
+    #     line = r[1]
+    #     print(f'{label_list[i]} : {line}')
+    #     result_line.append(line)
+    #     i += 1
+    # print('-------------------------------')
+    
+    texts = []
+    bboxes = []
+    confs = []
+    for i, r in enumerate(result):
+        text = r[1]
+        box = r[0]
+        conf = r[2]
+        texts.append(text)
+        bboxes.append([[int(x), int(y)] for x, y in box])
+        confs.append(conf)
+        
+    full_text = " ".join(texts)
+    
+    return full_text, bboxes, confs
+# ==================================================================================
