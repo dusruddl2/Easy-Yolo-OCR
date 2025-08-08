@@ -63,8 +63,8 @@ if __name__ == "__main__":
     
     opt = parser.parse_args()
     
-    opt.img = "/nfs/home/yeonkyung/AMORE/Easy-Yolo-OCR/image_ours/LBL124_20250221_20250221_141627_736.png"
-    opt.recog_model_dir = "/nfs/home/yeonkyung/AMORE/Easy-Yolo-OCR/saved_models/v1.0.0"
+    opt.img = "./image_ours/LBL124_20250221_20250221_141627_736.png"
+    opt.recog_model_dir = "./Easy-Yolo-OCR/saved_models/v1.0.0"
     opt.recog_network = "iter_3000"
     opt.detection_weights = opt.recog_model_dir + "/epoch50.pt"
     
